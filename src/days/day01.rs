@@ -1,19 +1,18 @@
-use crate::days::getFileLines;
+use crate::days::get_file_lines;
 use crate::{Solution, SolutionPair};
-use std::cmp::max;
 
 ///////////////////////////////////////////////////////////////////////////////
 
 pub fn solve() -> SolutionPair {
-    let lines = getFileLines(1);
+    let lines = get_file_lines(1);
     let mut groups: Vec<u64> = vec![];
-    let mut currentGroup: u64 = 0;
+    let mut current_group: u64 = 0;
     for line in lines {
         if line.is_empty() {
-            groups.push(currentGroup);
-            currentGroup = 0;
+            groups.push(current_group);
+            current_group = 0;
         } else {
-            currentGroup += line.parse::<u64>().unwrap();
+            current_group += line.parse::<u64>().unwrap();
         }
     }
     groups.sort();

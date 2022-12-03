@@ -26,7 +26,7 @@ pub mod day23;
 pub mod day24;
 pub mod day25;
 
-pub fn getFileLines(day: u8) -> Vec<String> {
+pub fn get_file_lines(day: u8) -> Vec<String> {
     let string: String = fs::read_to_string(format!("input/{}.txt", day)).unwrap();
     string.lines().map(|s| s.to_string()).collect()
 }

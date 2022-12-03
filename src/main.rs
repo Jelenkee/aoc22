@@ -1,3 +1,5 @@
+extern crate core;
+
 mod days;
 mod etc;
 
