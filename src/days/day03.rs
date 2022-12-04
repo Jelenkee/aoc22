@@ -23,7 +23,7 @@ fn get_common_letter(ruck: &str) -> char {
     let c1 = ruck.get(0..(ruck.len() / 2)).unwrap();
     let c2 = ruck.get((ruck.len() / 2)..ruck.len()).unwrap();
     let mut set1 = c1.chars().collect::<HashSet<char>>();
-    let mut set2 = c2.chars().collect::<HashSet<char>>();
+    let set2 = c2.chars().collect::<HashSet<char>>();
     for ch in set2 {
         if !set1.insert(ch) {
             return ch;
