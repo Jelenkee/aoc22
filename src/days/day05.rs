@@ -5,7 +5,7 @@ use crate::{Solution, SolutionPair};
 
 pub fn solve() -> SolutionPair {
     // Your solution here...
-    let mut lines = get_file_lines(5);
+    let lines = get_file_lines(5);
     let mut stack_lines = vec![];
     let mut move_lines = vec![];
     let mut stack_numbers = String::new();
