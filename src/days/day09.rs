@@ -21,7 +21,6 @@ pub fn solve() -> SolutionPair {
         let steps = split.next().unwrap().parse::<u32>().unwrap();
         for _ in 0..steps {
             let knot_len = knots.len();
-            let kcopy = format!("{:?}", knots);
             for i in 0..knot_len {
                 let previous_knot_o = if i == 0 {
                     None
@@ -38,7 +37,7 @@ pub fn solve() -> SolutionPair {
                         _ => panic!("invalid direction"),
                     }
                 } else {
-                    let mut previous_knot = previous_knot_o.unwrap();
+                    let previous_knot = previous_knot_o.unwrap();
                     if !is_attached(*current_knot, previous_knot) {
                         if current_knot.0 != previous_knot.0 && current_knot.1 != previous_knot.1 {
                             let x = (current_knot.0 - previous_knot.0).abs() == 1;
