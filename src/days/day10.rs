@@ -52,7 +52,7 @@ pub fn solve() -> SolutionPair {
             } else {
                 None
             }
-        };
+        }
     }
     let image_lines = pixels
         .chunks(40)
@@ -71,7 +71,7 @@ pub fn solve() -> SolutionPair {
 }
 
 fn draw_crt_line(x: &i32) {
-    let mut v = (0..40).map(|i| '.').collect::<Vec<char>>();
+    let mut v = (0..40).map(|_| '.').collect::<Vec<char>>();
     let start = x - 1;
     let end = x + 1;
     for i in start..=end {
