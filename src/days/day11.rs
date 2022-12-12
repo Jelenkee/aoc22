@@ -13,7 +13,7 @@ pub fn solve() -> SolutionPair {
         .map(|s| s.iter().map(|ss| ss.to_string()).collect::<Vec<String>>())
         .collect::<Vec<Vec<String>>>();
 
-    let mut monkey_map = monkey_templates
+    let monkey_map = monkey_templates
         .iter()
         .map(|t| Monkey::new(t))
         .map(|m| (m.id, RefCell::new(m)))
@@ -24,7 +24,7 @@ pub fn solve() -> SolutionPair {
         .map(|m| m.borrow().modulo)
         .product::<u64>();
     dbg!(&r#mod);
-    for i in 0..10_000 {
+    for _ in 0..10_000 {
         for monkey_cell in monkey_map.values() {
             let mut monkey = monkey_cell.borrow_mut();
             while let Some(item) = monkey.items.pop_front() {

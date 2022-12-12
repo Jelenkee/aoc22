@@ -69,13 +69,3 @@ pub fn solve() -> SolutionPair {
 
     (Solution::I32(sol1), Solution::U64(sol2))
 }
-
-fn draw_crt_line(x: &i32) {
-    let mut v = (0..40).map(|_| '.').collect::<Vec<char>>();
-    let start = x - 1;
-    let end = x + 1;
-    for i in start..=end {
-        v.insert(i as usize, '#');
-    }
-    println!("{}", v.iter().collect::<String>());
-}

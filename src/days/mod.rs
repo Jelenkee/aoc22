@@ -30,3 +30,49 @@ pub fn get_file_lines(day: u8) -> Vec<String> {
     let string: String = fs::read_to_string(format!("input/{}.txt", day)).unwrap();
     string.lines().map(|s| s.to_string()).collect()
 }
+
+pub struct Grid<T> {
+    vec: Vec<T>,
+    width: usize,
+    height: usize,
+}
+
+impl<T: Copy + Default> Grid<T> {
+    pub fn new(width: usize, height: usize) -> Grid<T> {
+        Grid {
+            vec: Vec::from_iter((0..(width * height)).map(|_| Default::default())),
+            width,
+            height,
+        }
+    }
+
+    pub fn get(&self, x: usize, y: usize) -> T {
+        *self.vec.get(self.get_index(x, y)).unwrap()
+    }
+
+    pub fn set(&mut self, x: usize, y: usize, v: T) {
+        let index = self.get_index(x, y);
+        self.vec[index] = v;
+    }
+
+    fn get_index(&self, x: usize, y: usize) -> usize {
+        y * self.width + x
+    }
+
+    fn get_neighbors(&self, pos: &(usize, usize)) -> Vec<(usize, usize)> {
+        let mut vec = vec![];
+        if pos.1 < self.height - 1 {
+            vec.push((pos.0, pos.1 + 1));
+        }
+        if pos.0 < self.width - 1 {
+            vec.push((pos.0 + 1, pos.1));
+        }
+        if pos.0 > 0 {
+            vec.push((pos.0 - 1, pos.1));
+        }
+        if pos.1 > 0 {
+            vec.push((pos.0, pos.1 - 1));
+        }
+        vec
+    }
+}
