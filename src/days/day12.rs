@@ -82,7 +82,6 @@ pub fn solve() -> SolutionPair {
     }
     distance_map.insert(start, 0);
 
-
     /*let mut ancestor_map = HashMap::new();
     let mut unvisited_nodes = all_nodes.iter().collect::<HashSet<&(usize, usize)>>();
     while !unvisited_nodes.is_empty() {
