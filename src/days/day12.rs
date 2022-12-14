@@ -1,6 +1,13 @@
 use crate::days::{get_file_lines, Grid};
 use crate::{Solution, SolutionPair};
+use petgraph::algo::{dijkstra, min_spanning_tree};
+use petgraph::data::FromElements;
+use petgraph::dot::{Config, Dot};
+use petgraph::graph::{NodeIndex, UnGraph};
+use petgraph::graphmap::GraphMap;
 use std::collections::{HashMap, HashSet, VecDeque};
+use std::fs::File;
+use std::io::Write;
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -26,16 +33,96 @@ pub fn solve() -> SolutionPair {
     }
 
     let all_nodes = {
-        let mut tmp = vec![];
+        let mut tmp = HashSet::new();
         for x in 0..grid.width {
             for y in 0..grid.height {
-                tmp.push((x, y));
+                tmp.insert((x, y));
             }
         }
         tmp
     };
 
-    let all_edges = {
+    let mut graph = UnGraph::<char, ()>::new_undirected();
+    let mut neigh_map = HashMap::new();
+    let mut node_map = HashMap::new();
+    let mut nodeindex_map = HashMap::new();
+    let mut start_node = Default::default();
+    let mut end_node = Default::default();
+    for n in &all_nodes {
+        let c = if &start == n {
+            'S'
+        } else if &end == n {
+            'E'
+        } else {
+            grid.get(n.0, n.1)
+        };
+        let pn = graph.add_node(c);
+        if &start == n {
+            start_node = pn;
+        } else if &end == n {
+            end_node = pn;
+        }
+        neigh_map.insert(*n, valid_neighbors(&grid, n));
+        //neigh_map.insert(*n, grid.get_neighbors(n));
+        node_map.insert(*n, pn);
+        nodeindex_map.insert(pn, n);
+    }
+    let mut edges: Vec<(NodeIndex, NodeIndex)> = vec![];
+    for n in node_map.keys() {
+        let pn = node_map.get(n).unwrap();
+        let npns = neigh_map
+            .get(n)
+            .unwrap()
+            .iter()
+            .map(|nn| node_map.get(nn).unwrap())
+            .collect::<Vec<&NodeIndex>>();
+        for nn in npns {
+            edges.push((*pn, *nn))
+        }
+    }
+    graph.extend_with_edges(edges);
+    let mut max = 0;
+    for i in &all_nodes {
+        let c = grid.get(i.0, i.1);
+        if c == 'a' {
+            let mut sum = {
+                let s = node_map.get(i).unwrap();
+                let result = dijkstra(&graph, *s, Some(end_node), |_| 1);
+                let mut vals = result.iter().collect::<Vec<(&NodeIndex, &i32)>>();
+                vals.sort_by(|(_, i), (_, a)| i.cmp(a));
+                *vals.last().unwrap().1
+            };
+            let mut sum2 = {
+                let s = node_map.get(i).unwrap();
+                let result = dijkstra(&graph, end_node, Some(*s), |_| 1);
+                let mut vals = result.iter().collect::<Vec<(&NodeIndex, &i32)>>();
+                vals.sort_by(|(_, i), (_, a)| i.cmp(a));
+                *vals.last().unwrap().1
+            };
+            //dbg!(sum,sum2,sum+sum2);
+            max = max.max(sum + sum2);
+        }
+    }
+    dbg!(max);
+    panic!();
+    let result = dijkstra(&graph, start_node, Some(end_node), |_| 1);
+    let mut vals = result.iter().collect::<Vec<(&NodeIndex, &i32)>>();
+    vals.sort_by(|(_, i), (_, a)| i.cmp(a));
+    let co = nodeindex_map.get(vals.last().unwrap().0).unwrap();
+    dbg!(co, grid.get(co.0, co.1));
+    dbg!(vals.last());
+    let result = dijkstra(&graph, end_node, Some(start_node), |_| 1);
+    let mut vals = result.iter().collect::<Vec<(&NodeIndex, &i32)>>();
+    vals.sort_by(|(_, i), (_, a)| i.cmp(a));
+    let co = nodeindex_map.get(vals.last().unwrap().0).unwrap();
+    dbg!(co, grid.get(co.0, co.1));
+    dbg!(vals.last());
+    //dbg!(grid.get(146,18));
+    //dbg!(valid_neighbors(&grid,&(145,18)));
+    //dbg!(valid_neighbors(&grid,&(146,18)));
+    //dbg!(valid_neighbors(&grid,&(147,18)));
+
+    /*let all_edges = {
         let mut tmp = vec![];
         for n in &all_nodes {
             for nn in valid_neighbors(&grid, n) {
@@ -43,18 +130,15 @@ pub fn solve() -> SolutionPair {
             }
         }
         tmp
-    };
+    };*/
 
-    dbg!(all_nodes.len());
-    dbg!(all_edges.len());
-
-    let mut visited = HashSet::new();
+    /*let mut visited = HashSet::new();
     let mut q = VecDeque::new();
     let mut d = HashMap::new();
     visited.insert(start);
     q.push_back(start);
     d.insert(start, 0);
-    let mut min_d = usize::MAX - (u8::MAX as usize);
+    let mut min_d = 999999999usize;
     while let Some(node) = q.pop_front() {
         let dist = *d.get(&node).unwrap();
         if node == end {
@@ -71,9 +155,11 @@ pub fn solve() -> SolutionPair {
         }
     }
 
-    dbg!(min_d);
+    dbg!(visited.len());
+    dbg!(all_nodes.len());
+    dbg!(min_d);*/
 
-    let mut path = VecDeque::new();
+    /*let mut path = VecDeque::new();
     path.push_back(start.clone());
 
     let mut distance_map = HashMap::new();
@@ -82,7 +168,7 @@ pub fn solve() -> SolutionPair {
     }
     distance_map.insert(start, 0);
 
-    /*let mut ancestor_map = HashMap::new();
+    let mut ancestor_map = HashMap::new();
     let mut unvisited_nodes = all_nodes.iter().collect::<HashSet<&(usize, usize)>>();
     while !unvisited_nodes.is_empty() {
         let u = unvisited_nodes
@@ -129,7 +215,7 @@ pub fn solve() -> SolutionPair {
         path.push_front(u);
     }*/
 
-    let mut previous = HashMap::new();
+    /*let mut previous = HashMap::new();
     let mut visited = HashSet::new();
     let mut queue = VecDeque::new();
     let mut dist = -1;
@@ -151,7 +237,7 @@ pub fn solve() -> SolutionPair {
         }
     }
 
-    dbg!(dist);
+    dbg!(dist);*/
 
     //let sol1: u64 = (path.len()-1) as u64; //4112 > x > 122
     let sol1: u64 = 0;
@@ -161,18 +247,15 @@ pub fn solve() -> SolutionPair {
 }
 
 fn valid_neighbors(grid: &Grid<char>, node: &(usize, usize)) -> Vec<(usize, usize)> {
+    let v = grid.get(node.0, node.1);
     let o = grid
         .get_neighbors(node)
         .iter()
         .filter(|n| {
-            let v = grid.get(node.0, node.1);
             let v2 = grid.get(n.0, n.1);
             (v as u8).abs_diff(v2 as u8) <= 1
-            //&& (v as u8) <= (v2 as u8)
         })
         .copied()
         .collect::<Vec<(usize, usize)>>();
-    //dbg!(grid.get(node.0,node.1));
-    //println!("{:?}",o.iter().map(|u|grid.get((*u).0,(*u).1)).collect::<HashSet<char>>());
     o
 }

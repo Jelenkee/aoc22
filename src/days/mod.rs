@@ -1,3 +1,4 @@
+use std::fmt::{Display, Formatter};
 use std::fs;
 
 pub mod day01;
@@ -74,5 +75,18 @@ impl<T: Copy + Default> Grid<T> {
             vec.push((pos.0, pos.1 - 1));
         }
         vec
+    }
+}
+
+impl<T: Copy + Default + ToString> Display for Grid<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        let mut s = String::new();
+        for y in 0..self.height {
+            for x in 0..self.width {
+                s.push(self.get(x, y).to_string().chars().next().unwrap_or(' '));
+            }
+            s.push('\n');
+        }
+        write!(f, "{}", s)
     }
 }
