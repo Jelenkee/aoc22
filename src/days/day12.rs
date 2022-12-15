@@ -1,13 +1,8 @@
 use crate::days::{get_file_lines, Grid};
 use crate::{Solution, SolutionPair};
-use petgraph::algo::{dijkstra, min_spanning_tree};
-use petgraph::data::FromElements;
-use petgraph::dot::{Config, Dot};
+use petgraph::algo::dijkstra;
 use petgraph::graph::{NodeIndex, UnGraph};
-use petgraph::graphmap::GraphMap;
-use std::collections::{HashMap, HashSet, VecDeque};
-use std::fs::File;
-use std::io::Write;
+use std::collections::{HashMap, HashSet};
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -104,7 +99,6 @@ pub fn solve() -> SolutionPair {
         }
     }
     dbg!(max);
-    panic!();
     let result = dijkstra(&graph, start_node, Some(end_node), |_| 1);
     let mut vals = result.iter().collect::<Vec<(&NodeIndex, &i32)>>();
     vals.sort_by(|(_, i), (_, a)| i.cmp(a));
