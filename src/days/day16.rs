@@ -1,6 +1,6 @@
 use crate::days::get_file_lines;
 use crate::{Solution, SolutionPair};
-use petgraph::algo::{dijkstra};
+use petgraph::algo::dijkstra;
 use petgraph::dot::{Config, Dot};
 use petgraph::graph::{DiGraph, NodeIndex};
 use petgraph::Graph;

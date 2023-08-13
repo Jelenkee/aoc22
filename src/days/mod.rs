@@ -51,6 +51,10 @@ impl<T: Copy + Default> Grid<T> {
         *self.vec.get(self.get_index(x, y)).unwrap()
     }
 
+    pub fn get_safe(&self, x: usize, y: usize) -> Option<T> {
+        self.vec.get(self.get_index(x, y)).copied()
+    }
+
     pub fn set(&mut self, x: usize, y: usize, v: T) {
         let index = self.get_index(x, y);
         self.vec[index] = v;
